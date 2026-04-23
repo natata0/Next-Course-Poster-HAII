@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Next Course — Interactive Poster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff;
+    --paper-2: ##B3A369;
+    --ink: #1a1a1a;
+    --ink-2: #3a3a3a;
+    --ink-3: #666460;
+    --rule: #cfccc0;
+    --navy: #1f3a5f;
+    --tan: #c9b89a;
+    --tan-soft: #e8dfcc;
+    --gray-soft: #eceae1;
+
+    --fill-slack: #e9d8ee;
+    --fill-py: #fbe5c9;
+    --fill-lf: #c9e4f5;
+    --fill-cl: #f5c9c4;
+    --fill-gray: #ececec;
+    --fill-astra: #f5c9c4;
+    --fill-emb: #d8e8c4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #e9e6d9; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 40px 20px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(0,0,0,0.04) 0, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0,0,0,0.04) 0, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .poster {
+    max-width: 1320px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 56px 64px 48px;
+    position: relative;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 20px 60px rgba(0,0,0,0.12),
+      0 40px 120px rgba(0,0,0,0.08);
+    z-index: 1;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .poster::before,
+  .poster::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--rule);
+  }
+  .poster::before { top: 16px; left: 16px; border-right: none; border-bottom: none; }
+  .poster::after  { bottom: 16px; right: 16px; border-left: none; border-top: none; }
+
+  header.poster-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 40px;
+    align-items: flex-start;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 32px;
+  }
+
+  .brand { display: flex; align-items: flex-start; gap: 16px; }
+  .brand-logo { width: 120px; height: auto; flex-shrink: 0; }
+  .brand-title { font-weight: 300; color: var(--navy); letter-spacing: -0.01em; line-height: 1; }
+  .brand-title .next { display: block; font-size: 44px; font-weight: 300; font-style: italic; }
+  .brand-title .course { display: block; font-size: 58px; font-weight: 700; font-style: italic; margin-top: -4px; }
+
+  .headline { padding-top: 8px; }
+  .headline h1 {
+    font-size: 40px; line-height: 1.1; font-weight: 700;
+    color: var(--ink-2); letter-spacing: -0.015em;
+  }
+  .headline .author {
+    margin-top: 12px; font-size: 15px; font-weight: 600; color: var(--navy);
+  }
+  .headline .author::before {
+    content: ''; display: inline-block; width: 28px; height: 2px;
+    background: var(--navy); margin-right: 10px; vertical-align: middle;
+  }
+
+  .meta-stamp {
+    text-align: right; font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 500; line-height: 1.8; padding-top: 8px;
+  }
+  .meta-stamp strong {
+    display: block; color: var(--navy); font-weight: 700;
+    font-size: 10px; margin-bottom: 2px;
+  }
+
+  .poster-grid {
+    display: grid; grid-template-columns: 1.15fr 1fr;
+    gap: 40px; align-items: start; width: 100%;
+  }
+
+  .poster-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .side-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .text-image-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .text-image-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .text-image-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .text-image-img {
+    width: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    display: block;
+  }
+
+  .block { margin-bottom: 22px; }
+  .block-label {
+    font-size: 15px; font-weight: 700; color: var(--navy);
+    margin-bottom: 6px; display: inline; margin-right: 4px;
+  }
+  .block p {
+    font-size: 14px; color: var(--ink-2); line-height: 1.65; display: inline;
+  }
+  .block p strong { font-weight: 700; color: var(--ink); }
+  .block.stack p { display: block; margin-top: 4px; }
+  .block.stack .block-label { display: block; margin-bottom: 8px; }
+
+  .version-switch {
+    display: flex; align-items: center; gap: 12px;
+    margin: 8px 0 12px; flex-wrap: wrap;
+  }
+  .version-tag {
+    display: inline-flex; background: transparent;
+    border: 1px solid var(--navy); border-radius: 2px; padding: 0;
+    font-family: inherit;
+  }
+  .version-tag button {
+    font-family: inherit; background: transparent; border: none;
+    padding: 6px 14px; font-size: 12px; font-weight: 600;
+    color: var(--navy); cursor: pointer; letter-spacing: 0.04em;
+    transition: all 0.2s ease; border-right: 1px solid var(--navy);
+  }
+  .version-tag button:last-child { border-right: none; }
+  .version-tag button.active { background: var(--navy); color: var(--paper); }
+  .version-tag button:hover:not(.active) { background: rgba(31, 58, 95, 0.08); }
+  .version-caption { font-size: 12px; color: var(--ink-3); font-style: italic; }
+
+  .diagram-box {
+    border: 1px solid var(--ink-3); border-radius: 2px;
+    padding: 20px 18px 14px; background: var(--paper);
+    position: relative; margin-top: 8px;
+  }
+  .diagram-box-label {
+    position: absolute; top: -9px; right: 16px;
+    background: var(--paper); padding: 0 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--ink-3); text-transform: uppercase;
+  }
+  .diagram-stage { position: relative; width: 100%; height: 240px; }
+  .diagram-stage svg { width: 100%; height: 100%; display: block; }
+
+  .node-group { transition: opacity 0.4s ease; cursor: pointer; }
+  .node-group:hover .node-box { filter: brightness(1.04); stroke-width: 1.5; }
+  .node-box { stroke: var(--ink-2); stroke-width: 1; transition: all 0.25s ease; }
+  .node-label {
+    font-family: 'Open Sans', sans-serif; font-size: 11px; font-weight: 700;
+    fill: var(--ink); text-anchor: middle; pointer-events: none;
+  }
+  .node-sub {
+    font-family: 'Open Sans', sans-serif; font-size: 9px; font-weight: 400;
+    fill: var(--ink-3); text-anchor: middle; pointer-events: none;
+  }
+  .edge { stroke: var(--ink-2); stroke-width: 1; fill: none; }
+  .edge-label {
+    font-family: 'Open Sans', sans-serif; font-size: 9px;
+    fill: var(--ink-3); font-style: italic; text-anchor: middle;
+  }
+  .hosted-bracket {
+    stroke: var(--ink-3); stroke-width: 1; fill: none; stroke-dasharray: 4 3;
+  }
+  .hosted-label {
+    font-family: 'Open Sans', sans-serif; font-size: 10px; font-weight: 600;
+    fill: var(--ink-3); font-style: italic;
+  }
+
+  .tools-row {
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px dashed var(--rule); position: relative;
+  }
+  .tools-row-label {
+    position: absolute; top: -8px; left: 16px;
+    background: var(--paper); padding: 0 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    color: var(--ink-3); text-transform: uppercase;
+  }
+  .tool-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .tool-pill {
+    background: var(--fill-gray); border: 1px solid var(--ink-3);
+    border-radius: 2px; padding: 8px 10px; cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .tool-pill:hover { transform: translateY(-2px); background: var(--tan-soft); }
+  .tool-pill .tool-name { font-size: 11px; font-weight: 700; color: var(--ink); display: block; }
+  .tool-pill .tool-fn { font-size: 9.5px; color: var(--ink-3); display: block; margin-top: 1px; }
+
+  .prompt-wrap { margin-top: 14px; position: relative; }
+  .prompt-box {
+    border: 1px solid var(--ink-3); border-radius: 2px;
+    padding: 14px 16px; background: var(--paper);
+    font-size: 11.5px; line-height: 1.55; color: var(--ink-2);
+    position: relative;
+  }
+  .prompt-box .prompt-role {
+    background: rgba(201, 184, 154, 0.25); padding: 2px 0;
+    transition: background 0.3s ease;
+  }
+  .prompt-box .prompt-cot {
+    background: rgba(185, 196, 212, 0.35); padding: 2px 0;
+    transition: background 0.3s ease;
+  }
+  .prompt-box.highlight-role .prompt-role { background: rgba(201, 184, 154, 0.75); }
+  .prompt-box.highlight-cot .prompt-cot { background: rgba(185, 196, 212, 0.85); }
+
+  .prompt-legend {
+    display: flex; gap: 16px; margin-top: 8px;
+    font-size: 10.5px; color: var(--ink-3); flex-wrap: wrap;
+  }
+  .legend-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    cursor: pointer; padding: 3px 8px; border-radius: 2px;
+    transition: background 0.2s ease;
+  }
+  .legend-chip:hover { background: var(--gray-soft); }
+  .legend-chip .swatch { width: 12px; height: 12px; border-radius: 2px; }
+  .legend-chip.role .swatch { background: rgba(201, 184, 154, 0.75); }
+  .legend-chip.cot .swatch { background: rgba(185, 196, 212, 0.85); }
+
+  .slack-mock {
+    background: var(--paper); border: 1px solid var(--ink-3);
+    border-radius: 4px; padding: 8px; font-size: 11px; margin-top: 10px;
+  }
+  .slack-head {
+    display: flex; gap: 4px; align-items: center;
+    padding-bottom: 6px; border-bottom: 1px solid var(--rule);
+  }
+  .slack-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .slack-dot:nth-child(1) { background: #ed5f5f; }
+  .slack-dot:nth-child(2) { background: #e5b84b; }
+  .slack-dot:nth-child(3) { background: #70b05e; }
+  .slack-channel { font-size: 10px; color: var(--ink-3); margin-left: 8px; font-weight: 500; }
+  .slack-body { padding: 8px 4px; display: flex; flex-direction: column; gap: 6px; }
+  .slack-msg { display: flex; gap: 8px; align-items: flex-start; }
+  .slack-avatar {
+    width: 22px; height: 22px; border-radius: 4px;
+    background: var(--navy); color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0;
+  }
+  .slack-avatar.bot { background: var(--tan); color: var(--ink); }
+  .slack-msg-content { flex: 1; }
+  .slack-user { font-size: 10.5px; font-weight: 700; color: var(--ink); }
+  .slack-time { font-size: 9px; color: var(--ink-3); margin-left: 6px; }
+  .slack-text { font-size: 10.5px; color: var(--ink-2); line-height: 1.45; margin-top: 1px; }
+
+  .participants { display: flex; gap: 4px; margin-top: 8px; }
+  .participant {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--tan-soft); border: 1px solid var(--ink-3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: var(--ink-2);
+  }
+
+  .ragas-box {
+    border: 1px solid var(--ink-3); border-radius: 2px;
+    padding: 12px 14px; background: var(--paper);
+    margin-top: 8px; font-size: 11px;
+  }
+  .ragas-header {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr;
+    padding-bottom: 6px; border-bottom: 1px solid var(--ink-2);
+    font-size: 10px; font-weight: 700; color: var(--ink);
+    text-transform: uppercase; letter-spacing: 0.08em; gap: 10px;
+  }
+  .ragas-row {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr;
+    padding: 7px 0; border-bottom: 1px dotted var(--rule);
+    align-items: center; font-size: 11px; gap: 10px;
+  }
+  .ragas-row:last-child { border-bottom: none; }
+  .ragas-row:hover { background: var(--gray-soft); }
+  .ragas-label { font-weight: 600; color: var(--ink); }
+  .ragas-val {
+    display: flex; align-items: center; gap: 8px;
+    font-variant-numeric: tabular-nums; color: var(--ink-2);
+  }
+  .ragas-bar {
+    flex: 1; height: 4px; background: rgba(0,0,0,0.06);
+    border-radius: 1px; overflow: hidden; min-width: 40px;
+  }
+  .ragas-bar-fill {
+    height: 100%; background: var(--ink-2); width: 0;
+    transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s;
+  }
+  .ragas-row.winner .ragas-label::after {
+    content: '  ★'; color: var(--tan); font-size: 10px;
+  }
+
+  .section-title {
+    font-size: 14px; font-weight: 700; color: var(--navy);
+    margin-bottom: 6px; letter-spacing: -0.005em;
+  }
+
+  .col { display: flex; flex-direction: column; gap: 22px; }
+
+  /* Image placeholders */
+  .img-placeholder {
+    background:
+      repeating-linear-gradient(
+        45deg,
+        var(--gray-soft),
+        var(--gray-soft) 8px,
+        transparent 8px,
+        transparent 16px
+      ),
+      var(--paper-2);
+    border: 1px dashed var(--ink-3);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .img-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--rule);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+  .img-placeholder .ph-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    padding: 8px;
+  }
+  .img-placeholder .ph-icon {
+    width: 28px; height: 28px;
+    opacity: 0.4;
+  }
+  .img-placeholder .ph-label {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .img-placeholder .ph-hint {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: none;
+    font-style: italic;
+    color: var(--ink-3);
+    opacity: 0.75;
+  }
+
+  .logo-placeholder {
+    width: 120px;
+    height: 100px;
+    flex-shrink: 0;
+  }
+  .title-placeholder {
+    min-height: 80px;
+    min-width: 180px;
+    flex: 0 0 auto;
+    padding: 12px 20px;
+  }
+  .slack-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    margin-top: 10px;
+  }
+  .diagram-placeholder {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* --- VIDEO SECTION --- */
+  .video-section {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+  }
+  .video-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .video-caption {
+    font-size: 13px;
+    color: var(--ink-3);
+    font-style: italic;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .video-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+  .video-placeholder .ph-icon.ph-play {
+    width: 44px;
+    height: 44px;
+    color: var(--navy);
+    opacity: 0.55;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .video-placeholder:hover .ph-icon.ph-play {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+
+  .hint-bar {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 24px; padding: 10px 14px;
+    background: var(--gray-soft); border-radius: 2px;
+    font-size: 11px; color: var(--ink-3); font-style: italic;
+  }
+  .hint-bar::before {
+    content: '↗'; font-style: normal; font-size: 14px;
+    color: var(--navy); font-weight: 700;
+  }
+
+  .tooltip {
+    position: fixed; background: var(--ink); color: var(--paper);
+    padding: 8px 12px; border-radius: 3px;
+    font-size: 11px; line-height: 1.4; max-width: 240px;
+    pointer-events: none; opacity: 0;
+    transition: opacity 0.15s ease; z-index: 1000;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip strong {
+    color: var(--tan); font-weight: 700; font-size: 11px;
+    display: block; margin-bottom: 2px;
+  }
+
+  /* --- SVG DIAGRAM --- */
+  .diagram-stage { position:relative; width:100%; height:280px; }
+  .diagram-stage svg { width:100%; height:100%; display:block; }
+  .node-g { cursor:pointer; }
+  .node-g:hover .node-rect { filter:brightness(1.06); stroke-width:1.5px; }
+  .node-rect { stroke:#333; stroke-width:1px; transition:all 0.2s; }
+  .node-title { font-family:'Open Sans',sans-serif; font-size:11px; font-weight:700; fill:#1a1a1a; text-anchor:middle; pointer-events:none; }
+  .node-sub   { font-family:'Open Sans',sans-serif; font-size:9px;  font-weight:400; fill:#555; text-anchor:middle; pointer-events:none; }
+  .edge-path  { fill:none; stroke:#333; stroke-width:1.5px; marker-end:url(#arr); }
+  .edge-path.bidir { marker-start:url(#arr); }
+  .edge-path.dashed { stroke-dasharray:4 3; }
+  .edge-lbl   { font-family:'Open Sans',sans-serif; font-size:8.5px; fill:#666; text-anchor:middle; pointer-events:none; font-style:italic; }
+  .bracket-rect { fill:none; stroke:#888; stroke-width:1px; stroke-dasharray:5 3; rx:6; }
+  .bracket-lbl  { font-family:'Open Sans',sans-serif; font-size:10px; font-weight:600; fill:#666; font-style:italic; }
+
+
+  @media (max-width: 1000px) {
+    body { padding: 20px 10px; }
+    .poster { padding: 32px 24px; }
+    .poster-grid { grid-template-columns: 1fr; gap: 32px; }
+    header.poster-header { grid-template-columns: 1fr; gap: 16px; }
+    .meta-stamp { text-align: left; }
+    .headline h1 { font-size: 18px; }
+    .brand-title .next { font-size: 32px; }
+    .brand-title .course { font-size: 42px; }
+    .side-by-side { grid-template-columns: 1fr; }
+    .text-image-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="tooltip" id="tooltip"></div>
+
+<main class="poster">
+
+  <header class="poster-header">
+    <div class="brand">
+      <div style="font-family: 'Open Sans', sans-serif; font-size: 52px; font-weight: 800; font-style: italic; color: #003057; line-height: 1;">
+        Next<br>Course
+      </div>
+    </div>
+
+    <div class="headline">
+      <h1>AI Powered Course Planning<br>for MS-HCI Students</h1>
+      <div class="author">Natalie Jarrett</div>
+    </div>
+
+    <div class="meta-stamp">
+      <strong>Case Study</strong>
+      Georgia Tech · MS-HCI<br>
+      Capstone · 2026<br>
+    </div>
+  </header>
+
+  <div class="poster-body">
+
+    <!-- Problem + Solution: single column -->
+    <div class="block">
+      <span class="block-label">Problem:</span>
+      <p>Georgia Tech's existing registration process can be confusing for students and frustrating for faculty. This is especially true for an interdisciplinary, multi-departmental program like MS-HCI. <strong>Students report having difficulties finding relevant courses and learning more about available courses.</strong></p>
+    </div>
+
+    <div class="block">
+      <span class="block-label">Solution:</span>
+      <p><strong>Next Course</strong> is an AI-powered assistant designed to help Georgia Tech MS-HCI students learn more about courses, get recommendations, understand program requirements, and more…</p>
+    </div>
+
+    <!-- Prototyping and Slack: each as text + image row, stacked -->
+    <div class="text-image-stack">
+
+      <div class="text-image-row">
+        <div class="text-image-text">
+          <div class="block stack">
+            <span class="block-label">Prototyping:</span>
+            <p>Next Course is built on Langflow, an open-source tool for building AI applications.</p>
+          </div>
+        </div>
+        <img src="Langflow Screnshot.png" class="text-image-img">
+      </div>
+
+      <div class="text-image-row">
+        <div class="text-image-text">
+          <div class="section-title">Deployed on Slack Workspace</div>
+          <p style="font-size: 13.5px; color: var(--ink-2); line-height: 1.6; margin-top: 6px;">
+            Slack was chosen as a popular platform that MS-HCI students already use for communication — supporting course-planning tasks like searching for past course reviews or asking questions about registration procedures.<strong>We hosted user study sessions with 7 current MS-HCI students</strong>, where we had them complete 2 scenario-based tasks with the agent, followed by an interview and a survey. Additionally, we hosted informal feedback sessions with stakeholders (MS-HCI advisors and administrators).
+          </p>
+        </div>
+        <img src="Next Course User Test Slack.png" class="text-image-img">
+      </div>
+
+    </div>
+
+    <!-- Everything else: single column -->
+    <div>
+      <div class="section-title">System Architecture</div>
+      <div class="version-switch">
+        <div class="version-tag" role="tablist">
+          <button class="active" data-version="v1">Next Course V1</button>
+          <button data-version="v2">Next Course V2</button>
+        </div>
+        <span class="version-caption" id="versionCaption">Tool-based agent</span>
+      </div>
+
+      <div class="diagram-box">
+        <span class="diagram-box-label" id="diagramLabel">V1 · Tool-based</span>
+        <div class="diagram-stage">
+          <svg id="diagramSvg" viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;"></svg>
+        </div>
+        <div class="tools-row">
+          <span class="tools-row-label" id="toolsRowLabel">Tools</span>
+          <div class="tool-pills" id="toolPills"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; font-size: 11.5px; color: var(--ink-3); font-style: italic;" id="modelCaption">
+        Sonnet 4.5 — a well-regarded reasoning model · Verified MS-HCI / Georgia Tech resources as custom tools
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">Next Course V1 Prompt</div>
+      <div class="prompt-wrap">
+        <div class="prompt-box" id="promptBox">
+          <span class="prompt-role">You are an academic advisor for the Master's in Human-Computer Interaction (MS-HCI) program at Georgia Institute of Technology, helping students with course recommendations, course reviews, professor information, and degree planning guidance. Be concise, because you have no more than a 2000 max word limit.</span>
+          <br><br>
+          Tools: MS-HCI Handbook (the official MS-HCI Student Handbook), Catalogue Search (the official Georgia Tech Course Catalog), Course Review Search (verified course reviews from students), Web Search.<br><br>
+          For simple factual questions about requirements, deadlines, or policies — search the Handbook first and answer directly from it.<br><br>
+          <span class="prompt-cot">For everything else, use the following resources: 1 HANDBOOK · Review the MS-HCI Student Handbook. Use the MS-HCI Handbook Search tool to confirm approved courses and degree requirements. Note any grade requirements or credit hour constraints. Never recommend anything that conflicts with the Handbook. When checking if a student can take a course, check in this order: is it a core course, a specialization course for their track, or on any track's approved elective list? If yes to any of these, they can take it. Always check Handbook notes for broader eligibility rules that override track-specific lists.</span>
+        </div>
+        <div class="prompt-legend">
+          <span class="legend-chip role" data-highlight="role"><span class="swatch"></span>Role-based persona</span>
+          <span class="legend-chip cot" data-highlight="cot"><span class="swatch"></span>Chain of thought instructions</span>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="block stack">
+      <span class="block-label">Next Course V2:</span>
+      <p>Although we initially slated it for future work, we decided to build a version of Next Course as a fully <strong>Retrieval Augmented Generation (RAG)</strong> agent. This setup would not only be the more likely direction for a fully deployable agent, but also enabled us to compare the two system design approaches.</p>
+    </div>
+
+    <div>
+      <div class="section-title">RAGAs Evaluation</div>
+      <p style="font-size: 13.5px; color: var(--ink-2); line-height: 1.6;">
+        We utilized the <strong>RAGAs framework</strong> to evaluate and compare the two versions across <strong>6 evaluation questions</strong>. The tool-based version performed better on both shared metrics; however, the RAG version was faster and would not need to be hosted locally.
+      </p>
+
+      <div class="ragas-box">
+        <div class="ragas-header">
+          <span>Metric</span>
+          <span>V1 · Tools</span>
+          <span>V2 · RAG</span>
+        </div>
+        <div class="ragas-row winner">
+          <span class="ragas-label">Answer Relevancy</span>
+          <span class="ragas-val">0.817 <div class="ragas-bar"><div class="ragas-bar-fill" data-w="82"></div></div></span>
+          <span class="ragas-val">0.625 <div class="ragas-bar"><div class="ragas-bar-fill" data-w="63"></div></div></span>
+        </div>
+        <div class="ragas-row winner">
+          <span class="ragas-label">Answer Correctness</span>
+          <span class="ragas-val">0.562 <div class="ragas-bar"><div class="ragas-bar-fill" data-w="56"></div></div></span>
+          <span class="ragas-val">0.373 <div class="ragas-bar"><div class="ragas-bar-fill" data-w="37"></div></div></span>
+        </div>
+        <div class="ragas-row">
+          <span class="ragas-label" style="font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.1em; padding-top: 4px;">RAG-only metrics</span>
+          <span></span><span></span>
+        </div>
+        <div class="ragas-row">
+          <span class="ragas-label">Faithfulness</span>
+          <span class="ragas-val" style="color: var(--ink-3); font-style: italic;">n/a</span>
+          <span class="ragas-val">0.353 <div class="ragas-bar"><div class="ragas-bar-fill" data-w="35"></div></div></span>
+        </div>
+        <div class="ragas-row">
+          <span class="ragas-label">Context Precision</span>
+          <span class="ragas-val" style="color: var(--ink-3); font-style: italic;">n/a</span>
+          <span class="ragas-val">0.431 <div class="ragas-bar"><div class="ragas-bar-fill" data-w="43"></div></div></span>
+        </div>
+      </div>
+      <div style="margin-top: 8px; font-size: 10px; color: var(--ink-3); font-style: italic;">
+        Mean scores across 6 evaluation questions · ★ marks the winning version on shared metrics · Faithfulness and Context Precision require retrieved-context ground truth and were only computed for the RAG version
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">Demo</div>
+      <p style="font-size: 13px; color: var(--ink-3); font-style: italic; margin-bottom: 10px;">A short looping walkthrough of Next Course responding to a student query in Slack.</p>
+      <video autoplay loop muted playsinline style="width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; display: block;">
+        <source src="Next Course Demo.mp4" type="video/mp4">
+      </video>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  // ── Diagram data matching the actual diagrams ──────────────────────────────
+  const diagrams = {
+    v1: {
+      caption: 'Tool-based agent',
+      label: 'V1 · Tool-based',
+      modelCaption: 'Sonnet 4.5 — a well-regarded reasoning model · Verified MS-HCI / Georgia Tech resources as custom tools',
+      toolsLabel: 'Tools',
+      viewBox: '0 0 700 260',
+      bracket: { x:200, y:10, w:340, h:230, label:'Hosted locally' },
+      nodes: [
+        { id:'slack', x:20,  y:100, w:140, h:60, rx:12, fill:'#e9d8ee', label:'Slack',         sub:'User Message',  tip:'<strong>Slack</strong>Receives and sends messages from MS-HCI students.' },
+        { id:'py',    x:220, y:40,  w:130, h:55, rx:12, fill:'#fbe5c9', label:'Python script',  sub:'',              tip:'<strong>Python script</strong>Listens for Slack events and forwards them to Langflow.' },
+        { id:'ngrok', x:220, y:145, w:130, h:55, rx:12, fill:'#b2f0e8', label:'ngrok',          sub:'Public Tunnel', tip:'<strong>ngrok</strong>Exposes the locally-hosted Langflow agent over a public HTTPS URL.' },
+        { id:'lf',    x:400, y:40,  w:140, h:55, rx:12, fill:'#c9e4f5', label:'Langflow',       sub:'Agent + Tools', tip:'<strong>Langflow</strong>Visual agent framework that orchestrates tool calls.' },
+        { id:'cl',    x:400, y:145, w:140, h:55, rx:12, fill:'#f5c9c4', label:'Claude Sonnet',  sub:'Anthropic API', tip:'<strong>Claude Sonnet</strong>Reasoning model that decides which tool to invoke and generates the reply.' },
+      ],
+      edges: [
+        { x1:160, y1:118, x2:220, y2:68,  label:'Sends',   bidir:false },
+        { x1:160, y1:140, x2:220, y2:172, label:'Replies', bidir:false, dashed:true },
+        { x1:350, y1:67,  x2:400, y2:67,  label:'',        bidir:false },
+        { x1:285, y1:95,  x2:285, y2:145, label:'Tunnels', bidir:false },
+        { x1:350, y1:172, x2:400, y2:172, label:'',        bidir:false },
+        { x1:470, y1:95,  x2:470, y2:145, label:'LLM Calls', bidir:true },
+      ],
+      tools: [
+        { name:'MS-HCI Handbook',    fn:'search_handbook', tip:'<strong>search_handbook</strong>Queries the official MS-HCI student handbook for policies and requirements.' },
+        { name:'Course Review Search', fn:'search_reviews', tip:'<strong>search_reviews</strong>Retrieves student-submitted reviews for past courses.' },
+        { name:'Catalogue Search',   fn:'run_lookup',      tip:'<strong>run_lookup</strong>Looks up courses in the official Georgia Tech course catalog.' },
+        { name:'Web Search',         fn:'perform_search',  tip:'<strong>perform_search</strong>Fallback general web search for external information.' },
+      ]
+    },
+    v2: {
+      caption: 'Fully Retrieval-Augmented Generation',
+      label: 'V2 · RAG pipeline',
+      modelCaption: 'Astra DB vector store + OpenAI embeddings — ingested once, no local hosting required',
+      toolsLabel: 'Sources',
+      viewBox: '0 0 700 290',
+      bracket: { x:155, y:10, w:295, h:220, label:'Hosted locally' },
+      nodes: [
+        { id:'slack', x:10,  y:95,  w:130, h:55, rx:12, fill:'#e9d8ee', label:'Slack',             sub:'User Message',         tip:'<strong>Slack</strong>Receives and sends messages from MS-HCI students.' },
+        { id:'py',    x:168, y:35,  w:120, h:50, rx:12, fill:'#fbe5c9', label:'Python script',      sub:'',                     tip:'<strong>Python script</strong>Routes Slack events into the Langflow RAG agent.' },
+        { id:'ngrok', x:168, y:140, w:120, h:50, rx:12, fill:'#b2f0e8', label:'ngrok',              sub:'Public Tunnel',        tip:'<strong>ngrok</strong>Exposes the locally-hosted agent over HTTPS.' },
+        { id:'lf',    x:330, y:35,  w:110, h:50, rx:12, fill:'#c9e4f5', label:'Langflow',           sub:'Agent + Components',   tip:'<strong>Langflow</strong>RAG agent that retrieves chunks and passes context to Claude.' },
+        { id:'cl',    x:330, y:140, w:110, h:50, rx:12, fill:'#f5c9c4', label:'Claude Sonnet',      sub:'Anthropic API',        tip:'<strong>Claude Sonnet</strong>Generates the final reply from retrieved context.' },
+        { id:'ws',    x:485, y:20,  w:120, h:45, rx:12, fill:'#ececec', label:'Web Search',         sub:'perform_search',       tip:'<strong>Web Search tool</strong>Fallback for queries outside the vector store.' },
+        { id:'astra', x:490, y:105, w:120, h:55, rx:10, fill:'#c9b89a', label:'Astra DB',           sub:'Vector Database',      tip:'<strong>Astra DB</strong>Hosted vector store containing all embedded program resources.' },
+        { id:'emb',   x:620, y:105, w:70,  h:55, rx:28, fill:'#e9d8ee', label:'OpenAI',            sub:'Embeddings',           tip:'<strong>OpenAI Embeddings</strong>text-embedding-3-small — converts queries and docs to vectors.' },
+        { id:'hb',    x:490, y:195, w:120, h:35, rx:10, fill:'#ececec', label:'MS-HCI Handbook',   sub:'Pdf',                  tip:'<strong>MS-HCI Handbook</strong>Ingested once as PDF chunks into Astra DB.' },
+        { id:'cat',   x:490, y:238, w:120, h:35, rx:10, fill:'#ececec', label:'2026 Course Catalog', sub:'json file',          tip:'<strong>2026 Course Catalog</strong>Ingested once as JSON into Astra DB.' },
+        { id:'rev',   x:490, y:281, w:120, h:35, rx:10, fill:'#ececec', label:'MS-HCI Reviews',    sub:'json file',            tip:'<strong>MS-HCI Student Course Reviews</strong>Ingested once as JSON into Astra DB.' },
+      ],
+      edges: [
+        { x1:140, y1:110, x2:168, y2:60,  label:'Sends',   bidir:false },
+        { x1:140, y1:132, x2:168, y2:165, label:'Replies', bidir:false, dashed:true },
+        { x1:288, y1:60,  x2:330, y2:60,  label:'',        bidir:false },
+        { x1:228, y1:85,  x2:228, y2:140, label:'Tunnels', bidir:false },
+        { x1:288, y1:165, x2:330, y2:165, label:'',        bidir:false },
+        { x1:385, y1:85,  x2:385, y2:140, label:'LLM Calls', bidir:true },
+        { x1:440, y1:52,  x2:485, y2:42,  label:'',        bidir:false },
+        { x1:440, y1:165, x2:490, y2:132, label:'',        bidir:false },
+        { x1:610, y1:132, x2:690, y2:132, label:'',        bidir:false, reverse:true },
+        { x1:550, y1:160, x2:550, y2:195, label:'Ingested Once', bidir:false, dashed:true },
+      ],
+      tools: [
+        { name:'MS-HCI Handbook',       fn:'chunked · indexed', tip:'<strong>MS-HCI Handbook</strong>Ingested once as PDF chunks into Astra DB.' },
+        { name:'2026 Course Catalog',   fn:'json · indexed',    tip:'<strong>2026 Course Catalog</strong>Course descriptions embedded and indexed.' },
+        { name:'MS-HCI Course Reviews', fn:'json · indexed',    tip:'<strong>MS-HCI Student Reviews</strong>Student reviews chunked and embedded for retrieval.' },
+        { name:'Web Search',            fn:'perform_search',    tip:'<strong>Web Search</strong>Fallback tool for queries outside the vector store.' },
+      ]
+    }
+  };
+
+  const diagramLabel  = document.getElementById('diagramLabel');
+  const versionCaption = document.getElementById('versionCaption');
+  const modelCaption  = document.getElementById('modelCaption');
+  const toolPills     = document.getElementById('toolPills');
+  const toolsRowLabel = document.getElementById('toolsRowLabel');
+  const tooltip       = document.getElementById('tooltip');
+  const svgEl         = document.getElementById('diagramSvg');
+
+  function showTip(e, html) { tooltip.innerHTML = html; tooltip.classList.add('show'); moveTip(e); }
+  function moveTip(e) {
+    const pad = 14, tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+    let x = e.clientX + pad, y = e.clientY + pad;
+    if (x + tw > window.innerWidth  - 10) x = e.clientX - tw - pad;
+    if (y + th > window.innerHeight - 10) y = e.clientY - th - pad;
+    tooltip.style.left = x + 'px'; tooltip.style.top = y + 'px';
+  }
+  function hideTip() { tooltip.classList.remove('show'); }
+
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(SVG_NS, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function txt(content, attrs, parent) {
+    const t = el('text', attrs, parent);
+    t.textContent = content;
+    return t;
+  }
+
+  function renderDiagram(v) {
+    const d = diagrams[v];
+    diagramLabel.textContent  = d.label;
+    versionCaption.textContent = d.caption;
+    modelCaption.textContent  = d.modelCaption;
+    toolsRowLabel.textContent = d.toolsLabel;
+    svgEl.setAttribute('viewBox', d.viewBox);
+
+    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+
+    // Arrow marker
+    const defs = el('defs', {}, svgEl);
+    const marker = el('marker', { id:'arr', markerWidth:'8', markerHeight:'6', refX:'8', refY:'3', orient:'auto' }, defs);
+    el('polygon', { points:'0 0, 8 3, 0 6', fill:'#333' }, marker);
+    const markerR = el('marker', { id:'arrR', markerWidth:'8', markerHeight:'6', refX:'0', refY:'3', orient:'auto' }, defs);
+    el('polygon', { points:'8 0, 0 3, 8 6', fill:'#333' }, markerR);
+
+    // Bracket
+    if (d.bracket) {
+      const b = d.bracket;
+      el('rect', { x:b.x, y:b.y, width:b.w, height:b.h, rx:6, class:'bracket-rect' }, svgEl);
+      txt(b.label, { x:b.x + b.w/2, y:b.y + 14, class:'bracket-lbl', 'text-anchor':'middle' }, svgEl);
+    }
+
+    // Edges
+    d.edges.forEach((e, i) => {
+      const path = el('path', {
+        d: `M ${e.x1} ${e.y1} L ${e.x2} ${e.y2}`,
+        class: 'edge-path' + (e.bidir ? ' bidir' : '') + (e.dashed ? ' dashed' : ''),
+        'marker-end': e.reverse ? '' : 'url(#arr)',
+        'marker-start': e.bidir ? 'url(#arrR)' : (e.reverse ? 'url(#arrR)' : ''),
+        style: `stroke-dasharray:400; stroke-dashoffset:400; transition: stroke-dashoffset 0.7s ease ${i*60}ms`
+      }, svgEl);
+      setTimeout(() => path.style.strokeDashoffset = 0, 30);
+
+      if (e.label) {
+        const mx = (e.x1 + e.x2) / 2;
+        const my = (e.y1 + e.y2) / 2 - 4;
+        txt(e.label, { x:mx, y:my, class:'edge-lbl', style:`opacity:0;transition:opacity 0.4s ease ${i*60+200}ms` }, svgEl);
+        setTimeout((t) => t.style.opacity = 1, i*60 + 200, svgEl.lastChild);
+      }
+    });
+
+    // Nodes
+    d.nodes.forEach((n, i) => {
+      const g = el('g', { class:'node-g', style:`opacity:0;transition:opacity 0.4s ease ${i*50}ms` }, svgEl);
+      el('rect', { x:n.x, y:n.y, width:n.w, height:n.h, rx:n.rx, class:'node-rect', fill:n.fill }, g);
+      const hasub = !!n.sub;
+      txt(n.label, { x:n.x+n.w/2, y:n.y+n.h/2 + (hasub ? -2 : 4), class:'node-title' }, g);
+      if (hasub) txt(n.sub, { x:n.x+n.w/2, y:n.y+n.h/2+12, class:'node-sub' }, g);
+      g.addEventListener('mouseenter', e => showTip(e, n.tip));
+      g.addEventListener('mousemove',  moveTip);
+      g.addEventListener('mouseleave', hideTip);
+      setTimeout(gg => gg.style.opacity = 1, i*50 + 20, g);
+    });
+
+    // Tool pills
+    toolPills.innerHTML = '';
+    d.tools.forEach(t => {
+      const pill = document.createElement('div');
+      pill.className = 'tool-pill';
+      pill.innerHTML = `<span class="tool-name">${t.name}</span><span class="tool-fn">${t.fn}</span>`;
+      pill.addEventListener('mouseenter', e => showTip(e, t.tip));
+      pill.addEventListener('mousemove', moveTip);
+      pill.addEventListener('mouseleave', hideTip);
+      toolPills.appendChild(pill);
+    });
+  }
+
+  document.querySelectorAll('.version-tag button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.version-tag button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDiagram(btn.dataset.version);
+    });
+  });
+
+  const promptBox = document.getElementById('promptBox');
+  document.querySelectorAll('.legend-chip').forEach(el => {
+    const target = el.dataset.highlight;
+    el.addEventListener('mouseenter', () => promptBox.classList.add('highlight-' + target));
+    el.addEventListener('mouseleave', () => promptBox.classList.remove('highlight-' + target));
+  });
+
+  const bars = document.querySelectorAll('.ragas-bar-fill');
+  const barObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.style.width = entry.target.dataset.w + '%';
+      barObs.unobserve(entry.target);
+    });
+  }, { threshold: 0.5 });
+  bars.forEach(b => barObs.observe(b));
+
+  renderDiagram('v1');
+</script>
+
+</body>
+</html>
