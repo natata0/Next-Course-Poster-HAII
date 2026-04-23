@@ -218,8 +218,7 @@
     font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
     color: var(--ink-3); text-transform: uppercase;
   }
-  .diagram-stage { position: relative; width: 100%; height: 240px; }
-  .diagram-stage svg { width: 100%; height: 100%; display: block; }
+  .diagram-stage svg { width:100%; height:auto; display:block; }
 
   .node-group { transition: opacity 0.4s ease; cursor: pointer; }
   .node-group:hover .node-box { filter: brightness(1.04); stroke-width: 1.5; }
@@ -516,8 +515,8 @@
   }
 
   /* --- SVG DIAGRAM --- */
-  .diagram-stage { position:relative; width:100%; height:280px; }
-  .diagram-stage svg { width:100%; height:100%; display:block; }
+  .diagram-stage { position:relative; width:100%; }
+  .diagram-stage svg { width:100%; height:auto; display:block; }
   .node-g { cursor:pointer; }
   .node-g:hover .node-rect { filter:brightness(1.06); stroke-width:1.5px; }
   .node-rect { stroke:#333; stroke-width:1px; transition:all 0.2s; }
@@ -622,7 +621,7 @@
       <div class="diagram-box">
         <span class="diagram-box-label" id="diagramLabel">V1 · Tool-based</span>
         <div class="diagram-stage">
-          <svg id="diagramSvg" viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;"></svg>
+          <svg id="diagramSvg" viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;"></svg>
         </div>
         <div class="tools-row">
           <span class="tools-row-label" id="toolsRowLabel">Tools</span>
@@ -751,7 +750,7 @@
       label: 'V2 · RAG pipeline',
       modelCaption: 'Astra DB vector store + OpenAI embeddings — ingested once, no local hosting required',
       toolsLabel: 'Sources',
-      viewBox: '0 0 700 290',
+      viewBox: '0 0 700 330',
       bracket: { x:155, y:10, w:295, h:220, label:'Hosted locally' },
       nodes: [
         { id:'slack', x:10,  y:95,  w:130, h:55, rx:12, fill:'#e9d8ee', label:'Slack',             sub:'User Message',         tip:'<strong>Slack</strong>Receives and sends messages from MS-HCI students.' },
@@ -824,6 +823,7 @@
     modelCaption.textContent  = d.modelCaption;
     toolsRowLabel.textContent = d.toolsLabel;
     svgEl.setAttribute('viewBox', d.viewBox);
+    svgEl.style.height = 'auto';
 
     while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
 
