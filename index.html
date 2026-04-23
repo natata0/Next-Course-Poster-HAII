@@ -623,10 +623,6 @@
         <div class="diagram-stage">
           <svg id="diagramSvg" viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;"></svg>
         </div>
-        <div class="tools-row">
-          <span class="tools-row-label" id="toolsRowLabel">Tools</span>
-          <div class="tool-pills" id="toolPills"></div>
-        </div>
       </div>
 
       <div style="margin-top: 10px; font-size: 11.5px; color: var(--ink-3); font-style: italic;" id="modelCaption">
@@ -720,30 +716,32 @@
       caption: 'Tool-based agent',
       label: 'V1 · Tool-based',
       modelCaption: 'Sonnet 4.5 — a well-regarded reasoning model · Verified MS-HCI / Georgia Tech resources as custom tools',
-      toolsLabel: 'Tools',
-      viewBox: '0 0 700 260',
+      viewBox: '0 0 820 260',
       bracket: { x:200, y:10, w:340, h:230, label:'Hosted locally' },
+      toolHeader: { label:'Tool', x:635, y:22 },
       nodes: [
-        { id:'slack', x:20,  y:100, w:140, h:60, rx:12, fill:'#e9d8ee', label:'Slack',         sub:'User Message',  tip:'<strong>Slack</strong>Receives and sends messages from MS-HCI students.' },
-        { id:'py',    x:220, y:40,  w:130, h:55, rx:12, fill:'#fbe5c9', label:'Python script',  sub:'',              tip:'<strong>Python script</strong>Listens for Slack events and forwards them to Langflow.' },
-        { id:'ngrok', x:220, y:145, w:130, h:55, rx:12, fill:'#b2f0e8', label:'ngrok',          sub:'Public Tunnel', tip:'<strong>ngrok</strong>Exposes the locally-hosted Langflow agent over a public HTTPS URL.' },
-        { id:'lf',    x:400, y:40,  w:140, h:55, rx:12, fill:'#c9e4f5', label:'Langflow',       sub:'Agent + Tools', tip:'<strong>Langflow</strong>Visual agent framework that orchestrates tool calls.' },
-        { id:'cl',    x:400, y:145, w:140, h:55, rx:12, fill:'#f5c9c4', label:'Claude Sonnet',  sub:'Anthropic API', tip:'<strong>Claude Sonnet</strong>Reasoning model that decides which tool to invoke and generates the reply.' },
+        { id:'slack', x:20,  y:100, w:140, h:60, rx:12, fill:'#e9d8ee', label:'Slack',               sub:'User Message',    tip:'<strong>Slack</strong>Receives and sends messages from MS-HCI students.' },
+        { id:'py',    x:220, y:40,  w:130, h:55, rx:12, fill:'#fbe5c9', label:'Python script',        sub:'',                tip:'<strong>Python script</strong>Listens for Slack events and forwards them to Langflow.' },
+        { id:'ngrok', x:220, y:145, w:130, h:55, rx:12, fill:'#b2f0e8', label:'ngrok',                sub:'Public Tunnel',   tip:'<strong>ngrok</strong>Exposes the locally-hosted Langflow agent over a public HTTPS URL.' },
+        { id:'lf',    x:400, y:40,  w:140, h:55, rx:12, fill:'#c9e4f5', label:'Langflow',             sub:'Agent + Tools',   tip:'<strong>Langflow</strong>Visual agent framework that orchestrates tool calls.' },
+        { id:'cl',    x:400, y:145, w:140, h:55, rx:12, fill:'#f5c9c4', label:'Claude Sonnet',        sub:'Anthropic API',   tip:'<strong>Claude Sonnet</strong>Reasoning model that decides which tool to invoke and generates the reply.' },
+        { id:'t1',    x:570, y:30,  w:145, h:42, rx:10, fill:'#ececec', label:'MS-HCI Handbook',      sub:'search_handbook', tip:'<strong>search_handbook</strong>Queries the official MS-HCI student handbook.' },
+        { id:'t2',    x:570, y:82,  w:145, h:42, rx:10, fill:'#ececec', label:'Course Review Search', sub:'search_reviews',  tip:'<strong>search_reviews</strong>Retrieves student-submitted course reviews.' },
+        { id:'t3',    x:570, y:134, w:145, h:42, rx:10, fill:'#ececec', label:'Catalogue Search',     sub:'run_lookup',      tip:'<strong>run_lookup</strong>Looks up courses in the Georgia Tech catalog.' },
+        { id:'t4',    x:570, y:186, w:145, h:42, rx:10, fill:'#ececec', label:'Web Search',           sub:'perform_search',  tip:'<strong>perform_search</strong>Fallback general web search.' },
       ],
       edges: [
-        { x1:160, y1:118, x2:220, y2:68,  label:'Sends',   bidir:false },
-        { x1:160, y1:140, x2:220, y2:172, label:'Replies', bidir:false, dashed:true },
-        { x1:350, y1:67,  x2:400, y2:67,  label:'',        bidir:false },
-        { x1:285, y1:95,  x2:285, y2:145, label:'Tunnels', bidir:false },
-        { x1:350, y1:172, x2:400, y2:172, label:'',        bidir:false },
+        { x1:160, y1:118, x2:220, y2:68,  label:'Sends',    bidir:false },
+        { x1:160, y1:140, x2:220, y2:172, label:'Replies',  bidir:false, dashed:true },
+        { x1:350, y1:67,  x2:400, y2:67,  label:'',         bidir:false },
+        { x1:285, y1:95,  x2:285, y2:145, label:'Tunnels',  bidir:false },
+        { x1:350, y1:172, x2:400, y2:172, label:'',         bidir:false },
         { x1:470, y1:95,  x2:470, y2:145, label:'LLM Calls', bidir:true },
+        { x1:540, y1:67,  x2:570, y2:51,  label:'',         bidir:false },
+        { x1:540, y1:67,  x2:570, y2:103, label:'',         bidir:false },
+        { x1:540, y1:67,  x2:570, y2:155, label:'',         bidir:false },
+        { x1:540, y1:67,  x2:570, y2:207, label:'',         bidir:false },
       ],
-      tools: [
-        { name:'MS-HCI Handbook',    fn:'search_handbook', tip:'<strong>search_handbook</strong>Queries the official MS-HCI student handbook for policies and requirements.' },
-        { name:'Course Review Search', fn:'search_reviews', tip:'<strong>search_reviews</strong>Retrieves student-submitted reviews for past courses.' },
-        { name:'Catalogue Search',   fn:'run_lookup',      tip:'<strong>run_lookup</strong>Looks up courses in the official Georgia Tech course catalog.' },
-        { name:'Web Search',         fn:'perform_search',  tip:'<strong>perform_search</strong>Fallback general web search for external information.' },
-      ]
     },
     v2: {
       caption: 'Fully Retrieval-Augmented Generation',
@@ -789,8 +787,6 @@
   const diagramLabel  = document.getElementById('diagramLabel');
   const versionCaption = document.getElementById('versionCaption');
   const modelCaption  = document.getElementById('modelCaption');
-  const toolPills     = document.getElementById('toolPills');
-  const toolsRowLabel = document.getElementById('toolsRowLabel');
   const tooltip       = document.getElementById('tooltip');
   const svgEl         = document.getElementById('diagramSvg');
 
@@ -821,7 +817,6 @@
     diagramLabel.textContent  = d.label;
     versionCaption.textContent = d.caption;
     modelCaption.textContent  = d.modelCaption;
-    toolsRowLabel.textContent = d.toolsLabel;
     svgEl.setAttribute('viewBox', d.viewBox);
     svgEl.style.height = 'auto';
 
@@ -839,6 +834,13 @@
       const b = d.bracket;
       el('rect', { x:b.x, y:b.y, width:b.w, height:b.h, rx:6, class:'bracket-rect' }, svgEl);
       txt(b.label, { x:b.x + b.w/2, y:b.y + 14, class:'bracket-lbl', 'text-anchor':'middle' }, svgEl);
+    }
+
+    // Tool section header (V1 only)
+    if (d.toolHeader) {
+      txt(d.toolHeader.label, { x:d.toolHeader.x, y:d.toolHeader.y,
+        class:'bracket-lbl', 'text-anchor':'middle',
+        style:'font-size:11px; font-weight:700; fill:#333;' }, svgEl);
     }
 
     // Edges
@@ -873,17 +875,6 @@
       setTimeout(gg => gg.style.opacity = 1, i*50 + 20, g);
     });
 
-    // Tool pills
-    toolPills.innerHTML = '';
-    d.tools.forEach(t => {
-      const pill = document.createElement('div');
-      pill.className = 'tool-pill';
-      pill.innerHTML = `<span class="tool-name">${t.name}</span><span class="tool-fn">${t.fn}</span>`;
-      pill.addEventListener('mouseenter', e => showTip(e, t.tip));
-      pill.addEventListener('mousemove', moveTip);
-      pill.addEventListener('mouseleave', hideTip);
-      toolPills.appendChild(pill);
-    });
   }
 
   document.querySelectorAll('.version-tag button').forEach(btn => {
